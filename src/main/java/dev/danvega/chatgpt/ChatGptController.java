@@ -48,6 +48,7 @@ public class ChatGptController {
                 .content();
 
         model.addAttribute("formattedResponse", chatService.formatResponse(response));
+        model.addAttribute("message", message);
 
         return HtmxResponse.builder()
                 .view("response :: responseFragment")

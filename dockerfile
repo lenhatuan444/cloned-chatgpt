@@ -1,35 +1,32 @@
-# Use Eclipse Temurin JDK 21 as the base image
+# Stage 1: Build the application
 FROM eclipse-temurin:21-jdk-alpine AS builder
 
-# Set the working directory for the build stage
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml first to cache dependencies
+# Copy only the necessary files to cache dependencies
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
 
-# Grant execute permission to Maven wrapper
+# Ensure Maven wrapper is executable
 RUN chmod +x mvnw
 
-# Download dependencies (faster subsequent builds)
+# Download dependencies first (cached unless pom.xml changes)
 RUN ./mvnw dependency:go-offline
 
-# Copy the entire project
+# Copy the rest of the source code
 COPY . .
 
-# Build the application
+# Build the application without running tests (faster)
 RUN ./mvnw clean package -DskipTests
 
-# Use a smaller runtime image for the final stage
+# Stage 2: Run the application with a minimal image
 FROM eclipse-temurin:21-jre-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy the built JAR file from the builder stage
+# Copy the built JAR from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
-# Expose port 8080
 EXPOSE 8080
 
 # Run the application
