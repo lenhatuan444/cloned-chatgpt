@@ -120,8 +120,8 @@
             hx-swap="beforeend"
             hx-target="#response-container"
             hx-on="
-            htmx:beforeRequest: showUserMessage();
-            htmx:afterRequest: document.getElementById('loading-indicator').classList.add('hidden');"
+                  htmx:beforeRequest: showUserMessage(); document.getElementById('loading-indicator').classList.remove('hidden');
+                  htmx:afterRequest: document.getElementById('loading-indicator').classList.add('hidden');"
             hx-include="input[name='message']"
           >
             <div
