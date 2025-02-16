@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>ChatGPT Clone</title>
+
+    <!-- HTMX -->
+    <script
+      src="https://unpkg.com/htmx.org@1.9.12"
+      integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Syntax Highlighting -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+      }
+      .chat-container {
+        max-width: 1500px;
+        margin: auto;
+        padding: 20px;
+      }
+      /* User Question (Right-aligned, Blue) */
+      .user-message {
+        background-color: #007bff;
+        color: white;
+        padding: 12px;
+        border-radius: 12px;
+        text-align: right;
+        max-width: 75%;
+        margin-left: auto;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      /* ChatGPT Answer (Left-aligned, Gray) */
+      .chatgpt-response {
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 12px;
+        border-radius: 12px;
+        text-align: left;
+        max-width: 75%;
+        margin-right: auto;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      /* Labels */
+      .message-label {
+        font-weight: bold;
+        font-size: 14px;
+        display: block;
+      }
+      .user-label {
+        color: #007bff;
+        text-align: right;
+      }
+      .chatgpt-label {
+        color: #333;
+        text-align: left;
+      }
+
+      /* Code block styling */
+      pre {
+        background-color: #1e1e1e !important;
+        color: #fff !important;
+        padding: 10px;
+        border-radius: 5px;
+        overflow-x: auto;
+        font-family: monospace;
+      }
+      /* Chat Animation */
+      .chatgpt-response,
+      .user-message {
+        animation: fadeIn 0.3s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="h-screen bg-gray-100">
+    <div class="flex h-full">
+      <!-- Sidebar -->
+      <section class="w-64 bg-gray-200 p-4">
+        <div class="flex flex-col space-y-4">
+          <div id="recent-message-list" class="font-bold text-lg">Recent</div>
+        </div>
+      </section>
+      <!-- Main Content -->
+      <main class="flex flex-col bg-white p-4 w-full max-w-full">
+        <div
+          id="response-container"
+          class="flex-1 mb-4 p-4 h-full overflow-auto"
+        ></div>
+        <div class="">
+          <form
+            id="chatForm"
+            class="w-full flex"
+            hx-post="/api/chat"
+            hx-swap="beforeend"
+            hx-target="#response-container"
+            hx-on="
+            htmx:beforeRequest: showUserMessage();
+            htmx:afterRequest: document.getElementById('loading-indicator').classList.add('hidden');"
+            hx-include="input[name='message']"
+          >
+            <div
+              class="flex items-center bg-gray-200 rounded-full p-2 shadow-md flex-grow"
+            >
+              <input
+                id="message"
+                name="message"
+                class="bg-gray-200 outline-none text-gray-700 rounded-full py-2 px-4 w-full"
+                type="text"
+                placeholder="Message ChatGPT Clone"
+              />
+              <div
+                id="loading-indicator"
+                class="hidden text-gray-600 flex items-center space-x-2 mt-2"
+              >
+                <svg
+                  class="animate-spin h-5 w-5 text-gray-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 0116 0"
+                  ></path>
+                </svg>
+                <span>Loading...</span>
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="bg-gray-300 hover:bg-gray-400 text-gray-600 rounded-full p-2 ml-2"
+            >
+              <svg
+                class="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                ></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </main>
+    </div>
+
+    <!-- Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script>
+      function showUserMessage() {
+        var inputField = document.getElementById("message");
+        var userMessage = inputField.value.trim();
+        if (userMessage === "") return;
+
+        var chatContainer = document.getElementById("response-container");
+
+        // Kiểm tra nếu tin nhắn cuối cùng là của user thì không thêm lại
+        var lastMessage = chatContainer.lastElementChild;
+        if (
+          lastMessage &&
+          lastMessage.classList.contains("user-message") &&
+          lastMessage.innerText.includes(userMessage)
+        ) {
+          return;
+        }
+
+        // Tạo phần tử tin nhắn user
+        var userMessageDiv = document.createElement("div");
+        userMessageDiv.className = "user-message";
+        userMessageDiv.innerHTML = "<strong>You:</strong> " + userMessage;
+
+        // Thêm vào khung chat
+        chatContainer.appendChild(userMessageDiv);
+
+        // Xóa nội dung input trước khi gửi
+        inputField.value = "";
+
+        // Cuộn xuống cuối cùng
+        scrollToBottom();
+      }
+
+      // Hàm cuộn xuống cuối cùng
+      function scrollToBottom() {
+        var chatContainer = document.getElementById("response-container");
+        setTimeout(() => {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }, 100); // Delay 100ms để đảm bảo tin nhắn mới đã được render
+      }
+
+      // Lắng nghe sự kiện khi HTMX cập nhật DOM
+      document.body.addEventListener("htmx:afterSwap", function (event) {
+        scrollToBottom();
+      });
+
+      Prism.highlightAll();
+    </script>
+  </body>
+</html>

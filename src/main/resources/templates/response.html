@@ -1,0 +1,8 @@
+<div th:fragment="responseFragment(message, response)" class="chat-container">
+  <!-- ChatGPT Answer -->
+  <div>
+    <div class="chatgpt-response">
+      <span th:utext="${formattedResponse}"></span>
+    </div>
+  </div>
+</div>
