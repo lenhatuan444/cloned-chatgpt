@@ -22,10 +22,10 @@ import dev.tuanle.chatgpt.service.ChatService;
 @CrossOrigin
 public class ChatGptController {
 
-    private static final Logger log = LoggerFactory.getLogger(ChatGptController.class);
-    private final ChatClient chatClient;
     @Autowired
     private ChatService chatService;
+
+    private final ChatClient chatClient;
 
     public ChatGptController(ChatClient.Builder builder) {
         this.chatClient = builder
@@ -41,7 +41,6 @@ public class ChatGptController {
     @HxRequest
     @PostMapping("/api/chat")
     public HtmxResponse generate(@RequestParam String message, Model model) {
-        log.info("User Message: {}", message);
         String response = chatClient.prompt()
                 .user(message)
                 .call()
