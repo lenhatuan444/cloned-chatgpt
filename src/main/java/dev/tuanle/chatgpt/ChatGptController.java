@@ -19,7 +19,6 @@ import dev.tuanle.chatgpt.service.ChatService;
 @Controller
 @CrossOrigin
 public class ChatGptController {
-
     @Autowired
     private ChatService chatService;
 
