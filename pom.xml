@@ -9,7 +9,7 @@
 		<version>3.3.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>dev.danvega</groupId>
+	<groupId>dev.tuanle</groupId>
 	<artifactId>chatgpt</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>chatgpt</name>

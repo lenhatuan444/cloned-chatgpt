@@ -1,4 +1,4 @@
-package dev.danvega.chatgpt.service;
+package dev.tuanle.chatgpt.service;
 
 import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;

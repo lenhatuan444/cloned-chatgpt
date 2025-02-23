@@ -1,4 +1,4 @@
-package dev.danvega.chatgpt;
+package dev.tuanle.chatgpt;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

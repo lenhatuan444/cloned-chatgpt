@@ -1,4 +1,4 @@
-package dev.danvega.chatgpt;
+package dev.tuanle.chatgpt;
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HtmxResponse;
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import dev.danvega.chatgpt.service.ChatService;
+import dev.tuanle.chatgpt.service.ChatService;
 
 @Controller
 @CrossOrigin
